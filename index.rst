@@ -70,7 +70,7 @@ Elements
 
 The elements of service deployment are:
 
-Container Release
+Docker Image Release
   The container(s) with the service to be deployed. 
 
 Configuration Management
@@ -89,14 +89,17 @@ During earlier stages of maturity, development of each one of those steps can be
 
 In technical terms, as service maturity evolves, configuration management moves from imperative to declarative. 
 
-Container Release
------------------
+Docker Image Release
+--------------------
 
 For Kubernetes model, the quantum of deployment is a Docker image. 
 
 Containers by themselves are the end result of the release management process and they themselves are a reflection of possibly different approaches to that (cadence, testing, floating v. pinned dependencies).
 
-In certain models (nublado) there is additional environmental injection to the container. This means that the injection layer in and of itself is part of the service. 
+In certain models (nublado) there is additional environmental injection to the container. This means that the injection layer in and of itself is part of the service.
+
+**Recommendation**: Use DockerHub or if necessary a cache. 
+
 
 Configuration Management
 ------------------------
@@ -107,18 +110,18 @@ The two Kubernetes native ways of doing this are Helm and Kustomize. Kustomize i
 
 At SQuaRE we stalled for a long time on this debate, as different developers have (strong) preferences in one direction or the other. We eventually realise this was a false dichotomy and our desire to standardise was being applied at the wrong layer (configuration management v. deployment orchestration).
 
-Recommendation: Use either Helm or Kustomize (or even both - an emerging model is Helm + "last mile" Kustomize) according to the needs of the service and the prefernace of the developer. See the section on Deployment Orchestration for dicussion. 
+**Recommendation**: Use either Helm or Kustomize (or even both - an emerging model is Helm + "last mile" Kustomize) according to the needs of the service and the prefernace of the developer. See the section on Deployment Orchestration for dicussion. 
 
 The other big debate in this are is whether to store configuration with the code of the service or in a deployment repository full of just the configurations of related services (or even many deployments of the one service).
 
-Recommendation: store deployment configuration in its own repository (eg. lsp_deploy). This makes it far easier to find if you are not familiar with the service, easier to provide GitOps support (see below) and easier to modify for different deployments.
+**Recommendation**: store deployment configuration in its own repository (eg. lsp_deploy). This makes it far easier to find if you are not familiar with the service, easier to provide GitOps support (see below) and easier to modify for different deployments.
 
 Secrets
 -------
 
 Secrets should always be curated so that they are securely stored and retrievable by the ops team.
 
-Recommendation: use Vault
+**Recommendation**: use Vault
 
 Note this should be done as early as possible given it is compatible with both imperative and declarative models. 
 
@@ -133,9 +136,9 @@ Deployment Orchestration
 
 Our debates in this area centered as to whether to use terraform or a more kubernetes-native system for orchestrating the deployment. For a long time this was the Terraform v. Helm debate. Terraform was seen as having the advantage of being able to sequence complex deployments of services consisting of multiple containers, and being in use for non-Kubernetes deployments (eg. virtual machine-based architectures). On the other hand Helm was seen as much easier to understand and a native match to Kubernetes applications. It can be argued that sequencing (launch A, when it is up launch B becaue B requires A, etc) is unecessary for well-designed Kubernetes services that provide health points (launch A and B together, A monitors B's health endpoint and goes green when it detects B is available). 
 
-We recently had a prototype cycle with ArgoCD, and we are coming to the conclusion that using a native Kubernetes continuous deployment service such as ArgoCD resolves both the Helm v. Kustomize debate as well as the Helm v. Terraform debate. ArgoCD features remove the need to template Helm with Tiller and have easy support for "last mile" Helm+customize models. Moreover it provides a unified interface for executing GitOps configuration control irrespective of the underlying configuration management used. While we prefer unsequenced Kubernetes services, ArgoCD does have support for "wave" deployment that means terraform is not required even for sequenced deployments. 
+We recently had a prototype cycle with ArgoCD, and we are coming to the conclusion that using a native Kubernetes continuous deployment service such as ArgoCD resolves both the Helm v. Kustomize debate as well as the Helm v. Terraform debate. ArgoCD features remove the need to template Helm with Tiller and have easy support for "last mile" Helm+customize models. Moreover it provides a unified interface for executing GitOps configuration control irrespective of the underlying configuration management used. While we prefer unsequenced Kubernetes services, ArgoCD does have support for "wave" deployment that means terraform is not required even for sequenced deployments. Kubernetes is also gaining the ability to configure DNS records through an operator further reducing the need to rely on terraform. 
 
-Recommendation: Use ArgoCD to orchestrate deployment of Helm, Kustomize and Helm-Kustomize services.
+**Recommendation**: Use ArgoCD to orchestrate deployment of Helm, Kustomize and Helm-Kustomize services.
 
 In addition, products like ArgoCD provide clear deployment dashboards that allow an operator to assess the health of a system and verify configuration control. 
 
@@ -145,7 +148,7 @@ Configuration Control
 
 Configuration Control is an outcome that can be achieved in a number of ways, ranging from process-driven ways (formal change control, compliance) to SRE-driven ways (automation, continuous deployment infrastructures etc). 
 
-Recommendation: use GitOps (automated deployment by a system driven from  a git merge to master or other special branch) as it is suited to both models (if regulatory gatekeeping is required, it can be performed before merge is authorized).
+**Recommendation**: use GitOps (automated deployment by a system driven from  a git merge to master or other special branch) as it is suited to both models (if regulatory gatekeeping is required, it can be performed before merge is authorized).
 
 The compelling advantage of GitOps is that it exposes a layer understood by all developers (git) which allows an operator to perform core maintainance operations (rolling back to a previous known-to-be-good version or doing a security patch for a dependency) without an underlying knowledge of the deployment architecture (eg Helm, kustomize or whatever else).
 
@@ -157,7 +160,11 @@ Deployment add-ons
 
 While not strictly speaking involved in the deployment process, monitoring and logging should be part of service deployment.
 
-We would like to also have service auto-discovery though our ideas for implementing this across all services are not full formed yet. 
+
+**Recommendation**: All services should expose status and logs throuh well known services, either their own as part of ensemble deployments or by shipping to facility services (LDF). 
+
+
+We would like to also have service auto-discovery though our ideas for implementing this across all services are not full formed yet.
 
 
    
