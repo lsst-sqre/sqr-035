@@ -105,11 +105,11 @@ The principle here is fairly simple: deployment = service + configuration
 
 The two Kubernetes native ways of doing this are Helm and Kustomize. Kustomize is simple and attractive for lightweight services; Helm has the advantage of support templating via Tiller and being a popular source of 3rd party charts (eg Influx).
 
-At SQuaRE we stalled for a long time on this debate, as different developers have (strong) preferences in one direction or the other. We eventually realise this was a false dichotomy and our desire to standardise was being applied at the wrong layer (configuration management v. deployment orchestration).
+At SQuaRE we stalled for a long time on this debate, as different developers have (strong) preferences in one direction or the other. We eventually realised this was a false dichotomy and our desire to standardise was being applied at the wrong layer (configuration management v. deployment orchestration).
 
-Recommendation: Use either Helm or Kustomize (or even both - an emerging model is Helm + "last mile" Kustomize) according to the needs of the service and the preferance of the developer. See the section on Deployment Orchestration for dicussion. 
+Recommendation: Use either Helm or Kustomize (or even both - an emerging model is Helm + "last mile" Kustomize) according to the needs of the service and the preferance of the developer. See the section on Deployment Orchestration for discussion.
 
-The other big debate in this are is whether to store configuration with the code of the service or in a deployment repository full of just the configurations of related services (or even many deployments of the one service).
+The other big debate in this is whether to store configuration with the code of the service or in a deployment repository full of just the configurations of related services (or even many deployments of the one service).
 
 Recommendation: store deployment configuration in its own repository (eg. lsp_deploy). This makes it far easier to find if you are not familiar with the service, easier to provide GitOps support (see below) and easier to modify for different deployments.
 
