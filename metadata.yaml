@@ -18,6 +18,12 @@ doc_title: "Deployment engineering for Kubernetes-based services."
 # Author names, ordered as a list. Each author name should be formatted as 'First Last'
 authors:
   - "Frossie Economou"
+  - "Jonathan Sick"
+  - "Christine Banek"
+  - "Adam Thornton"
+  - "Josh Hoblitt"
+  - "Angelo Fausti"
+  - "Simon Krughoff"
 
 # Current document revision date, YYYY-MM-DD
 # Only set this field if you need to manually fix the revision date;
